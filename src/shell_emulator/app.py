@@ -1,5 +1,6 @@
 import sys
 
+from . import context
 from .commands import COMMANDS
 from .context import ShellContext
 from .errors import ShellError
