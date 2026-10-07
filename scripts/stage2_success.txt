@@ -1,0 +1,3 @@
+ls test.txt
+cd folder
+exit

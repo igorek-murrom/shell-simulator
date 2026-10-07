@@ -1,0 +1,4 @@
+ls test.txt
+unknown_command
+cd folder
+exit

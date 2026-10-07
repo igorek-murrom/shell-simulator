@@ -8,8 +8,10 @@ from .errors import CommandNotFoundError
 from .parser import parse_line
 from .prompt import build_prompt
 from .state import ShellState
+from pathlib import Path
 
-
+SUCCESS_CODE = 0
+ERROR_CODE = 1
 SUCCESS_CODE = 0
 
 
@@ -61,3 +63,33 @@ class ShellEmulator:
                     return SUCCESS_CODE
             except ShellError as error:
                 self._report_error(error)
+
+    def run_script(self, script_path):
+        """Execute a startup script and stop on the first error."""
+        path = Path(script_path)
+
+        try:
+            with path.open("r", encoding="utf-8") as script:
+                for raw_line in script:
+                    line = raw_line.rstrip("\n")
+
+                    if not line.strip():
+                        continue
+
+                    self.output.write(
+                        build_prompt(self.context.state.cwd)
+                    )
+                    self.output.write(line + "\n")
+                    self.output.flush()
+
+                    try:
+                        if self.execute_line(line):
+                            return SUCCESS_CODE
+                    except ShellError as error:
+                        self._report_error(error)
+                        return ERROR_CODE
+        except OSError as error:
+            self._report_error(error)
+            return ERROR_CODE
+
+        return SUCCESS_CODE
