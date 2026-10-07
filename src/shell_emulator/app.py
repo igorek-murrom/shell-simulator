@@ -42,8 +42,12 @@ class ShellEmulator:
     def _report_error(self, error):
         print(f"error: {error}", file=self.output)
 
+    def _report_error_summary(self):
+        print("Execution finished with errors.", file=self.output)
+
     def run_interactive(self):
         """Run the emulator until exit or end of input."""
+        had_error = False
         while True:
             prompt = build_prompt(self.context.state.cwd)
             self.output.write(prompt)
@@ -56,12 +60,17 @@ class ShellEmulator:
                 continue
 
             if not line:
+                if had_error:
+                    self._report_error_summary()
                 return SUCCESS_CODE
 
             try:
                 if self.execute_line(line.rstrip("\n")):
+                    if had_error:
+                        self._report_error_summary()
                     return SUCCESS_CODE
             except ShellError as error:
+                had_error = True
                 self._report_error(error)
 
     def run_script(self, script_path):
@@ -87,9 +96,11 @@ class ShellEmulator:
                             return SUCCESS_CODE
                     except ShellError as error:
                         self._report_error(error)
+                        self._report_error_summary()
                         return ERROR_CODE
         except OSError as error:
             self._report_error(error)
+            self._report_error_summary()
             return ERROR_CODE
 
         return SUCCESS_CODE
