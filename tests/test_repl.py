@@ -75,6 +75,33 @@ class ReplTests(unittest.TestCase):
             "scripts/test.txt",
         )
 
+    def test_interactive_error_summary(self):
+        for ending in ("exit\n", ""):
+            with self.subTest(ending=ending):
+                output = io.StringIO()
+                emulator = ShellEmulator(
+                    input_stream=io.StringIO("unknown\nls\n" + ending),
+                    output_stream=output,
+                )
+
+                self.assertEqual(emulator.run_interactive(), SUCCESS_CODE)
+                self.assertTrue(output.getvalue().endswith(
+                    "Execution finished with errors.\n"
+                ))
+                self.assertEqual(output.getvalue().count(
+                    "Execution finished with errors."
+                ), 1)
+
+    def test_interactive_success_has_no_error_summary(self):
+        output = io.StringIO()
+        emulator = ShellEmulator(
+            input_stream=io.StringIO("ls\nexit\n"),
+            output_stream=output,
+        )
+
+        self.assertEqual(emulator.run_interactive(), SUCCESS_CODE)
+        self.assertNotIn("Execution finished with errors.", output.getvalue())
+
 
 class ScriptTests(unittest.TestCase):
     """Tests for startup scripts."""
@@ -97,6 +124,7 @@ class ScriptTests(unittest.TestCase):
             result = emulator.run_script(path)
 
         self.assertEqual(result, SUCCESS_CODE)
+        self.assertNotIn("Execution finished with errors.", output.getvalue())
         self.assertIn(
             "ls test",
             output.getvalue(),
@@ -128,6 +156,7 @@ class ScriptTests(unittest.TestCase):
         result_text = output.getvalue()
 
         self.assertIn("unknown", result_text)
+        self.assertTrue(result_text.endswith("Execution finished with errors.\n"))
         self.assertNotIn(
             "cd folder",
             result_text,
@@ -144,6 +173,9 @@ class ScriptTests(unittest.TestCase):
         )
 
         self.assertEqual(result, ERROR_CODE)
+        self.assertTrue(output.getvalue().endswith(
+            "Execution finished with errors.\n"
+        ))
 
 
 if __name__ == "__main__":
