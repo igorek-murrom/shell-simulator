@@ -11,3 +11,7 @@ class CommandNotFoundError(ShellError):
 
 class CommandArgumentError(ShellError):
     """Raised when a command receives invalid arguments."""
+
+
+class VFSError(ShellError):
+    """Raised when loading or accessing the virtual filesystem fails."""

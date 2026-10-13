@@ -1,6 +1,6 @@
 import sys
+from pathlib import Path
 
-from . import context
 from .commands import COMMANDS
 from .context import ShellContext
 from .errors import ShellError
@@ -8,20 +8,21 @@ from .errors import CommandNotFoundError
 from .parser import parse_line
 from .prompt import build_prompt
 from .state import ShellState
-from pathlib import Path
 
 SUCCESS_CODE = 0
 ERROR_CODE = 1
-SUCCESS_CODE = 0
 
 
 class ShellEmulator:
     """Console application that executes shell commands."""
 
-    def __init__(self, input_stream=None, output_stream=None):
+    def __init__(self, input_stream=None, output_stream=None, vfs=None):
+        """Create a session with optional streams and a loaded VFS."""
         self.input = input_stream or sys.stdin
         self.output = output_stream or sys.stdout
         state = ShellState()
+        if vfs is not None:
+            state.vfs = vfs
         self.context = ShellContext(state, self.output)
 
     def execute_line(self, line):
@@ -98,7 +99,7 @@ class ShellEmulator:
                         self._report_error(error)
                         self._report_error_summary()
                         return ERROR_CODE
-        except OSError as error:
+        except (OSError, UnicodeError) as error:
             self._report_error(error)
             self._report_error_summary()
             return ERROR_CODE

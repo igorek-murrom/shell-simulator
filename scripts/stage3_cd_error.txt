@@ -1,0 +1,2 @@
+cd first second
+ls must_not_execute

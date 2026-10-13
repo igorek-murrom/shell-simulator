@@ -1,0 +1,3 @@
+ls /
+unknown_command
+cd must_not_execute

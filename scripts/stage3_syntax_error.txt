@@ -1,0 +1,2 @@
+ls "unclosed
+cd must_not_execute

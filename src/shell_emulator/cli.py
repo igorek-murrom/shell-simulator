@@ -3,6 +3,8 @@ from pathlib import Path
 
 from .app import ERROR_CODE
 from .app import ShellEmulator
+from .errors import VFSError
+from .vfs import VirtualFileSystem
 
 
 def build_parser():
@@ -13,7 +15,7 @@ def build_parser():
     parser.add_argument(
         "--vfs",
         type=Path,
-        help="path to VFS",
+        help="path to a JSON VFS (default: empty in-memory root)",
     )
     parser.add_argument(
         "--script",
@@ -33,7 +35,22 @@ def main(argv=None):
     args = build_parser().parse_args(argv)
     _debug_config(args)
 
-    emulator = ShellEmulator()
+    try:
+        vfs = (
+            VirtualFileSystem.load(args.vfs)
+            if args.vfs is not None else VirtualFileSystem()
+        )
+    except VFSError as error:
+        print(f"error: {error}")
+        print("Execution finished with errors.")
+        return ERROR_CODE
+
+    directories, files, size = vfs.statistics()
+    print(
+        f"[debug] VFS loaded: directories={directories}, "
+        f"files={files}, bytes={size}"
+    )
+    emulator = ShellEmulator(vfs=vfs)
 
     if args.script is not None:
         return emulator.run_script(args.script)

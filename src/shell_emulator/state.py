@@ -1,9 +1,11 @@
 from dataclasses import dataclass, field
-import os
+
+from .vfs import VirtualFileSystem
 
 
 @dataclass
 class ShellState:
-    """Mutable state of the emulator session."""
+    """Mutable session state with a virtual working directory and tree."""
 
-    cwd: str = field(default_factory=os.getcwd)
+    cwd: str = "/"
+    vfs: VirtualFileSystem = field(default_factory=VirtualFileSystem)

@@ -1,0 +1,22 @@
+{
+  "type": "directory",
+  "name": "/",
+  "children": [
+    {
+      "type": "file",
+      "name": "hello.txt",
+      "content": "Привет, VFS!\n"
+    },
+    {
+      "type": "file",
+      "name": "two words.txt",
+      "content": "two words\n"
+    },
+    {
+      "type": "file",
+      "name": "data.bin",
+      "encoding": "base64",
+      "content": "AAECAwQFBgcICQoLDA0ODw=="
+    }
+  ]
+}
