@@ -1,0 +1,2 @@
+cd /missing
+must_not_execute

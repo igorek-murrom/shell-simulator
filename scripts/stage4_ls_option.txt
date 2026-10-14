@@ -1,0 +1,2 @@
+ls -z
+must_not_execute

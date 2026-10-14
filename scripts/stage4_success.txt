@@ -1,0 +1,35 @@
+ls
+ls /
+ls .
+ls -a
+ls lines.txt
+ls /.hidden
+ls "folder/two words.txt"
+ls //folder/./deep/
+cd folder
+ls
+ls -- -dash.txt
+uniq -- -dash.txt
+uniq "two words.txt"
+cd ./deep
+ls
+ls ..
+cd ../../../../..
+cd /folder/deep
+cd .
+cd ..
+cd
+cd -- /folder
+cd /
+uniq lines.txt
+uniq -c lines.txt
+uniq -d lines.txt
+uniq -u lines.txt
+uniq empty.txt
+uniq -c empty.txt
+uniq -d empty.txt
+uniq -u empty.txt
+uniq /folder/../lines.txt
+whoami
+exit
+must_not_execute

@@ -1,0 +1,2 @@
+ls lines.txt/child
+must_not_execute

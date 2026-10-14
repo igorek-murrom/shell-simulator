@@ -2,17 +2,9 @@ ls
 ls /
 ls .
 ls ..
-ls /hello.txt
-ls "two words.txt"
-ls /level1/level2/level3
-ls "$HOME"
-ls "${HOME}"
 cd
 cd /
 cd .
 cd ..
-cd "two words"
-cd /level1/level2/level3
-cd "$HOME"
 exit
 unknown_after_exit

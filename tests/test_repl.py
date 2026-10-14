@@ -14,22 +14,13 @@ from shell_emulator.errors import CommandNotFoundError
 class ReplTests(unittest.TestCase):
     """Tests for the shell emulator."""
 
-    def test_stub_commands(self):
+    def test_commands_on_empty_root(self):
         output = io.StringIO()
-        emulator = ShellEmulator(
-            output_stream=output,
-        )
-
-        self.assertFalse(
-            emulator.execute_line("ls one")
-        )
-        self.assertFalse(
-            emulator.execute_line("cd folder")
-        )
-
-        result = output.getvalue()
-        self.assertIn("ls one", result)
-        self.assertIn("cd folder", result)
+        emulator = ShellEmulator(output_stream=output)
+        self.assertFalse(emulator.execute_line("ls /"))
+        self.assertFalse(emulator.execute_line("cd /"))
+        self.assertEqual(output.getvalue(), "")
+        self.assertEqual(emulator.context.state.cwd, "/")
 
     def test_unknown_command(self):
         emulator = ShellEmulator(
@@ -107,7 +98,7 @@ class ScriptTests(unittest.TestCase):
     """Tests for startup scripts."""
 
     def test_script_success(self):
-        content = "ls test\nexit\n"
+        content = "ls /\nexit\n"
 
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "script.txt"
@@ -126,13 +117,13 @@ class ScriptTests(unittest.TestCase):
         self.assertEqual(result, SUCCESS_CODE)
         self.assertNotIn("Execution finished with errors.", output.getvalue())
         self.assertIn(
-            "ls test",
+            "ls /",
             output.getvalue(),
         )
 
     def test_script_stops_on_error(self):
         content = (
-            "ls test\n"
+            "ls /\n"
             "unknown\n"
             "cd folder\n"
         )

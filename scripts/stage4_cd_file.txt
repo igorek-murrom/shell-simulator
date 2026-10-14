@@ -1,0 +1,2 @@
+cd lines.txt
+must_not_execute

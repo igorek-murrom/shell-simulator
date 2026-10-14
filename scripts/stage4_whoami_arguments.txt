@@ -1,0 +1,2 @@
+whoami x
+must_not_execute

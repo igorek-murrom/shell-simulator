@@ -1,0 +1,48 @@
+{
+  "type": "directory",
+  "name": "/",
+  "children": [
+    {
+      "type": "file",
+      "name": ".hidden",
+      "content": "hidden\n"
+    },
+    {
+      "type": "file",
+      "name": "empty.txt",
+      "content": ""
+    },
+    {
+      "type": "file",
+      "name": "lines.txt",
+      "content": "a\na\nb\na\na\n\n\nlast"
+    },
+    {
+      "type": "file",
+      "name": "data.bin",
+      "encoding": "base64",
+      "content": "/wA="
+    },
+    {
+      "type": "directory",
+      "name": "folder",
+      "children": [
+        {
+          "type": "file",
+          "name": "two words.txt",
+          "content": "x\nx\ny\n"
+        },
+        {
+          "type": "file",
+          "name": "-dash.txt",
+          "content": "dash\n"
+        },
+        {
+          "type": "directory",
+          "name": "deep",
+          "children": []
+        }
+      ]
+    }
+  ]
+}

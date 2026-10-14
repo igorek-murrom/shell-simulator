@@ -1,0 +1,2 @@
+uniq data.bin
+must_not_execute

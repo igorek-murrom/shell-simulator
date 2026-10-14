@@ -32,7 +32,7 @@ class StageThreeTests(unittest.TestCase):
         result, output = self.run_cli(input_text="ls\nexit\n")
         self.assertEqual(result, 0)
         self.assertIn("directories=1, files=0, bytes=0", output)
-        self.assertIn(":/$ ls", output)
+        self.assertIn(":/$ ", output)
 
     def test_loaded_vfs_is_attached_to_session(self):
         vfs = VirtualFileSystem.load(PROJECT_ROOT / "vfs/deep.json")
@@ -40,7 +40,7 @@ class StageThreeTests(unittest.TestCase):
         self.assertIs(emulator.context.state.vfs, vfs)
         self.assertEqual(emulator.context.state.cwd, "/")
         emulator.execute_line("cd /level1")
-        self.assertEqual(emulator.context.state.cwd, "/")
+        self.assertEqual(emulator.context.state.cwd, "/level1")
 
     def test_success_script_and_exit(self):
         arguments = ("--vfs", str(PROJECT_ROOT / "vfs/deep.json"),
@@ -50,7 +50,7 @@ class StageThreeTests(unittest.TestCase):
             result, output = self.run_cli(*arguments)
         self.assertEqual(result, 0)
         self.assertIn("directories=4, files=5, bytes=35", output)
-        self.assertIn("ls /test home\n", output)
+        self.assertIn("level1\nroot.txt\n", output)
         self.assertNotIn("unknown_after_exit", output)
         self.assertNotIn("error:", output)
 

@@ -1,0 +1,2 @@
+uniq -z lines.txt
+must_not_execute
