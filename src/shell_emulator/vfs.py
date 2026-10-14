@@ -3,10 +3,12 @@
 import base64
 import binascii
 import json
+import posixpath
+import time
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from .errors import VFSError
+from .errors import VFSError, VFSNotFoundError
 
 
 @dataclass
@@ -17,6 +19,7 @@ class VFSNode:
     type: str
     content: bytes = b""
     children: dict = field(default_factory=dict)
+    mtime: float = field(default_factory=time.time)
 
 
 def _check_fields(data, required, optional=()):
@@ -146,7 +149,8 @@ class VirtualFileSystem:
                 stack.pop()
             return
         if part not in node.children:
-            raise VFSError(f"no such file or directory: {path}")
+            raise VFSNotFoundError(
+                f"no such file or directory: {path}")
         stack.append(node.children[part])
 
     def list_directory(self, path="/", cwd="/"):
@@ -162,6 +166,53 @@ class VirtualFileSystem:
         if node.type != "file":
             raise VFSError(f"is a directory: {path}")
         return node.content
+
+    @staticmethod
+    def absolute_path(path, cwd="/"):
+        """Normalize an already validated path inside the virtual root."""
+        full_path = path if path.startswith("/") else cwd + "/" + path
+        return "/" + posixpath.normpath(full_path).lstrip("/")
+
+    def _check_removal(self, path, cwd):
+        """Reject special entries and keep the active directory reachable."""
+        if not isinstance(path, str) or not path or "\0" in path:
+            raise VFSError("invalid VFS path")
+        if path.rstrip("/").split("/")[-1] in (".", ".."):
+            raise VFSError(f"cannot remove '.' or '..': {path}")
+        absolute = self.absolute_path(path, cwd)
+        current = self.absolute_path(cwd)
+        if absolute == "/":
+            raise VFSError("cannot remove virtual root")
+        if current == absolute or current.startswith(absolute + "/"):
+            message = f"cannot remove current directory or ancestor: {path}"
+            raise VFSError(message)
+
+    def _check_removal_type(self, node, path, recursive, directory_only):
+        """Validate directory emptiness or require recursive removal."""
+        if directory_only:
+            if node.type != "directory":
+                raise VFSError(f"not a directory: {path}")
+            if node.children:
+                raise VFSError(f"directory not empty: {path}")
+        elif node.type == "directory" and not recursive:
+            raise VFSError(f"is a directory (use rm -r): {path}")
+
+    def remove(self, path, cwd="/", recursive=False, directory_only=False,
+               missing_ok=False):
+        """Unlink a validated node without writing to the JSON source."""
+        self._check_removal(path, cwd)
+        try:
+            node = self.get_node(path, cwd)
+        except VFSNotFoundError:
+            if missing_ok:
+                return
+            raise
+        self._check_removal_type(node, path, recursive, directory_only)
+        absolute = self.absolute_path(path, cwd)
+        parent = self.get_node(posixpath.dirname(absolute))
+        del parent.children[node.name]
+        parent.mtime = time.time()
+
 
     def statistics(self):
         """Count directories, files, and decoded file bytes, including root."""

@@ -1,0 +1,2 @@
+rm "two words.txt" /missing large.txt
+must_not_execute

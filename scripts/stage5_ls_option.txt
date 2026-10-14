@@ -1,0 +1,2 @@
+ls -lhz
+must_not_execute

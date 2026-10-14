@@ -1,0 +1,2 @@
+rmdir tree
+must_not_execute

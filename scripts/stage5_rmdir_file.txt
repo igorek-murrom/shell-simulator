@@ -1,0 +1,2 @@
+rmdir large.txt
+must_not_execute

@@ -1,0 +1,3 @@
+cd empty
+rmdir /empty
+must_not_execute

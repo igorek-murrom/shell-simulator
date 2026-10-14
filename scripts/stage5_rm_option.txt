@@ -1,0 +1,2 @@
+rm -z large.txt
+must_not_execute

@@ -1,0 +1,2 @@
+rmdir /missing
+must_not_execute

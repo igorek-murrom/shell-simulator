@@ -1,0 +1,34 @@
+ls
+ls -l
+ls -h
+ls -a
+ls -lh
+ls -la
+ls -ha
+ls -lah
+ls -l -h -a
+ls -l large.txt
+ls -lh "two words.txt"
+ls -lah empty
+ls -l -- -dash.txt
+rm -- -dash.txt
+rmdir -- -empty
+rm "two words.txt"
+rm -f /missing
+rm -f
+rm -rf /missing/tree
+cd tree
+rm ./one.txt
+rmdir ./empty/
+ls -lah
+cd /
+rm -r //tree/./deep/level3/
+ls -lah tree/deep
+rm -R tree/deep
+rmdir tree empty
+rm -r -f large.txt /missing
+rm -rf .hidden
+ls -lah
+whoami
+exit
+must_not_execute

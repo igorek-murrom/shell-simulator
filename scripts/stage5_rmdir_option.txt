@@ -1,0 +1,2 @@
+rmdir -p empty
+must_not_execute

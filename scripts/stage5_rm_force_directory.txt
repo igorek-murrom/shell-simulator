@@ -1,0 +1,2 @@
+rm -f empty
+must_not_execute

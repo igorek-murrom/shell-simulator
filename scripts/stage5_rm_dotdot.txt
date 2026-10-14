@@ -1,0 +1,2 @@
+rm -r tree/deep/..
+must_not_execute

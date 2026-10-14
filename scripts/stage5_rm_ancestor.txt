@@ -1,0 +1,3 @@
+cd tree/deep
+rm -rf /tree
+must_not_execute

@@ -15,3 +15,7 @@ class CommandArgumentError(ShellError):
 
 class VFSError(ShellError):
     """Raised when loading or accessing the virtual filesystem fails."""
+
+
+class VFSNotFoundError(VFSError):
+    """Raised when a virtual path component does not exist."""

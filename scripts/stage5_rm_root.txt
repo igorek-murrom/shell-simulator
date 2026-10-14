@@ -1,0 +1,2 @@
+rm -rf /
+must_not_execute

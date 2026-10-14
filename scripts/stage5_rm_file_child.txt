@@ -1,0 +1,2 @@
+rm -rf large.txt/child
+must_not_execute

@@ -1,10 +1,12 @@
-"""Implement read-only UNIX-like commands against the in-memory VFS."""
+"""Dispatch UNIX-like commands against the in-memory VFS."""
 
 import posixpath
 
 from .errors import CommandArgumentError, VFSError
 from .prompt import get_username
 from .uniq import command_uniq
+from .listing import command_ls
+from .removal import command_rm, command_rmdir
 
 
 ONE_ARGUMENT = 1
@@ -21,42 +23,6 @@ def _ensure_no_args(name, args):
     """Reject arguments for commands that have no options or operands."""
     if args:
         raise CommandArgumentError(f"{name}: expected no arguments")
-
-
-def _ls_arguments(args):
-    """Parse the optional -a flag and -- option terminator."""
-    show_all = False
-    operands = []
-    options = True
-    for arg in args:
-        if options and arg == "--":
-            options = False
-        elif options and arg == "-a":
-            show_all = True
-        elif options and arg.startswith("-"):
-            raise CommandArgumentError(f"ls: unsupported option: {arg}")
-        else:
-            operands.append(arg)
-    _ensure_max_one("ls", operands)
-    return show_all, operands[0] if operands else "."
-
-
-def command_ls(args, context):
-    """List a file or sorted directory entries, optionally including dots."""
-    show_all, path = _ls_arguments(args)
-    state = context.state
-    node = state.vfs.get_node(path, state.cwd)
-    if node.type == "file":
-        names = [path]
-    else:
-        names = sorted(node.children)
-        if show_all:
-            names = [".", ".."] + names
-        else:
-            names = [name for name in names if not name.startswith(".")]
-    for name in names:
-        print(name, file=context.output)
-    return False
 
 
 def command_cd(args, context):
@@ -92,6 +58,8 @@ COMMANDS = {
     "ls": command_ls,
     "cd": command_cd,
     "uniq": command_uniq,
+    "rm": command_rm,
+    "rmdir": command_rmdir,
     "whoami": command_whoami,
     "exit": command_exit,
 }
